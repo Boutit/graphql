@@ -11,6 +11,7 @@ import (
 	"github.com/Boutit/graphql/internal/config"
 	"github.com/Boutit/graphql/internal/graph/generated"
 	graph "github.com/Boutit/graphql/internal/graph/resolver"
+	"github.com/Boutit/graphql/pkg/middleware/auth_grpc"
 	"github.com/go-chi/chi"
 	"github.com/rs/cors"
 )
@@ -29,6 +30,8 @@ func main() {
 			AllowedHeaders: 	[]string{"Access-Control-Allow-Headers", "Access-Control-Allow-Methods", "Access-Control-Allow-Origin", "Authorization", "Content-Type"},
 			AllowedOrigins:   []string{"http://localhost:8090"},
 	}).Handler)
+
+	router.Use(auth_grpc.CreateClient())
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 	
